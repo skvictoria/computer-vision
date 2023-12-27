@@ -39,6 +39,6 @@ m2[0, 0] = fx^2 * (r11^2 + r12^2 + r13^2) + 2*fx*cx * (r11*r31 + r12*r32 + r13*r
 ```
 
     - Extrinsic Matrix Decompostion
-    ![Rotation Decomposition](ViewMatrix_Decomposition/Rotation_decomposition.png)
+![Rotation Decomposition](ViewMatrix_Decomposition/Rotation_decomposition.png)
 
 ### Further Information : https://seulgi-kim.tistory.com/category/Computer%20Vision
