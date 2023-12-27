@@ -5,7 +5,8 @@ The computer vision theory of
 1. Camera Geometry
 2. Distortion and Undistortion in Fisheye Lens Model
 3. Distortion and Undistortion in Pinhole Lens Model
-4. ViewMatrix Composition
+4. ViewMatrix Decomposition
+    - Intrinsic Matrix Decomposition
 ```
 K = [[fx  0  cx]
      [0  fy  cy]
@@ -36,5 +37,8 @@ m1[2, 2] = [r31, r32, r33] . [r31, r32, r33]
 m2[0, 0] = fx^2 * (r11^2 + r12^2 + r13^2) + 2*fx*cx * (r11*r31 + r12*r32 + r13*r33) + cx^2 * (r31^2 + r32^2 + r33^2) = fx^2 + cx^2
 
 ```
+
+    - Extrinsic Matrix Decompostion
+    ![Rotation Decomposition](ViewMatrix_Decomposition/Rotation_decomposition.png)
 
 ### Further Information : https://seulgi-kim.tistory.com/category/Computer%20Vision
