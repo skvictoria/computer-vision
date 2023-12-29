@@ -3,7 +3,7 @@ import numpy as np
 import json
 
 # Finding the config file
-config_file_path = os.path.join('config.json')
+config_file_path = r'C:\Users\skvic\computer-vision\ViewMatrix_Decomposition\config.json'
 
 # Reading and decoding the JSON file
 with open(config_file_path, 'r') as f:
@@ -35,3 +35,48 @@ P = K.dot(np.hstack([R_wrld_wrt_cam, T_wrld_wrt_cam[:, np.newaxis]]))
 T_wrld2cam = np.vstack([np.hstack([R_wrld_wrt_cam, T_wrld_wrt_cam[:, np.newaxis]]), [0, 0, 0, 1]])
 
 ## 2. Extrinsic Decomposition
+'''
+yaw - pitch - roll
+'''
+pitch = -np.arcsin(R_wrld_wrt_cam[2, 0])
+yaw = np.arctan2(R_wrld_wrt_cam[2, 1], R_wrld_wrt_cam[2, 2])
+roll = np.arctan2(R_wrld_wrt_cam[1, 0], R_wrld_wrt_cam[0, 0])
+
+'''
+pitch - yaw - roll
+'''
+pitch = np.arctan2(-R_wrld_wrt_cam[2, 0], np.sqrt(R_wrld_wrt_cam[2, 1]**2 + R_wrld_wrt_cam[2, 2]**2))
+yaw = np.arctan2(R_wrld_wrt_cam[1, 0], R_wrld_wrt_cam[0, 0])
+roll = np.arctan2(R_wrld_wrt_cam[2, 1], R_wrld_wrt_cam[2, 2])
+
+print(pitch*180/np.pi, yaw*180/np.pi, roll*180/np.pi)
+
+# pitch difference 1 degree
+pitch += 1 * np.pi/180
+R_yaw = np.array([
+    [np.cos(yaw), -np.sin(yaw), 0],
+    [np.sin(yaw), np.cos(yaw), 0],
+    [0, 0, 1]
+])
+
+R_pitch = np.array([
+    [np.cos(pitch), 0, np.sin(pitch)],
+    [0, 1, 0],
+    [-np.sin(pitch), 0, np.cos(pitch)]
+])
+
+R_roll = np.array([
+    [1, 0, 0],
+    [0, np.cos(roll), -np.sin(roll)],
+    [0, np.sin(roll), np.cos(roll)]
+])
+
+'''
+yaw - pitch - roll
+'''
+R_wrld_wrt_cam_dif = R_yaw @ R_pitch @ R_roll
+
+'''
+pitch - yaw - roll
+'''
+R_wrld_wrt_cam_dif = R_pitch @ R_yaw @ R_roll
