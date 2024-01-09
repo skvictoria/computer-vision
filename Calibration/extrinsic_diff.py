@@ -66,19 +66,23 @@ P = K.dot(np.hstack([R_wrld_wrt_cam, T_wrld_wrt_cam[:, np.newaxis]]))
 image = np.zeros((2400, 2080, 3), dtype=np.uint8)
 
 ## 1. extrinsic 1 degree -> pixel difference
-for y in range(10, 50):
-    for x in range(5, 6):
-        wu,wv,w = P @ (np.array([x,y,0,1]).T)
-        #print(wu/w, wv/w)
-        cv2.circle(image, (int(wu/w), int(wv/w)), 5, (0,0,255), -1)
-
-for y in range(10, 50):
-    for x in range(5, 6):
+for y in range(10, 300):
+    for x in range(-10, 10):
         wu,wv,w = P_diff @ (np.array([x,y,0,1]).T)
         #print(wu/w, wv/w)
+        cv2.circle(image, (int(wu/w), int(wv/w)), 5, (0,0,255), -1)
+        wu,wv,w = P @ (np.array([x,y,0,1]).T)
+        #print(wu/w, wv/w)
         cv2.circle(image, (int(wu/w), int(wv/w)), 5, (255,0,0), -1)
+# for y in range(10, 300):
+#     for x in range(-10, 10):
+#         wu,wv,w = P @ (np.array([x,y,0,1]).T)
+#         #print(wu/w, wv/w)
+#         cv2.circle(image, (int(wu/w), int(wv/w)), 5, (255,0,0), -1)
 
-cv2.imwrite("png.png", image)
+
+
+cv2.imwrite("Extrinsicdiff2Pixdiff.png", image)
 
 ## 2. how many pixel difference?
 x = 5
@@ -93,9 +97,13 @@ for y in range(10, 50):
     #print(abs(u_dif - u), abs(v_dif - v))
 
 ## 3. 1 pixel diff -> ? m diff?
-for u in range(100, 101):
-    for v in range(2000, 2200):
-        wx, wy, _, w = np.linalg.inv(viewMatrix) @ np.array([u, v, 1, 1])
-        wx_diff, wy_diff, _, w_diff = np.linalg.inv(viewMatrix) @ np.array([u+8, v, 1, 1])
+U, S, VT = np.linalg.svd(P, full_matrices=False)
+P_pseudo_inverse = VT.T @ np.diag(1/S) @ U.T
 
-        print(abs(wx/w) - abs(wx_diff/w_dif), abs(wy/w) - abs(wy_diff/w_dif))
+
+for u in range(101, 102):
+    for v in range(0, 2000,10):
+        wx, wy, _, w = P_pseudo_inverse @ np.array([u, v,  1])
+        wx_diff, wy_diff, _, w_diff = P_pseudo_inverse @ np.array([u+30, v, 1])
+
+        print("at ", wy/w, " m: ",abs(wx/w - wx_diff/w_diff), abs(wy/w - wy_diff/w_diff))
